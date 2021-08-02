@@ -2,6 +2,8 @@
 
 A toolkit for creating and installing mods for [TROUBLESHOOTER: Abandoned Children](https://store.steampowered.com/app/470310/TROUBLESHOOTER_Abandoned_Children/).
 
+[**Download**](https://github.com/K0lb3/TroubleTool/releases)
+
 ## Installing Mods
 
 1. start tool
