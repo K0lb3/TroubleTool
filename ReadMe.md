@@ -35,3 +35,4 @@ A toolkit for creating and installing mods for [TROUBLESHOOTER: Abandoned Childr
 - improve logging
 - mod selection and ordering
 - improve Troubleshooter path finding
+- xml and lua delta patchs
