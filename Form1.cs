@@ -103,7 +103,7 @@ namespace TroubleTool
             AddToLog("Preparing Setup", Color.White);
             AddToLog($"Package Path: {am.package}", Color.White);
 
-            if (radioButtonData.Enabled)
+            if (radioButtonData.Checked)
             {
                 AddToLog($"Data Path: {am.data}", Color.White);
                 AddToLog("Rewriting entries to use /Data", Color.White);
@@ -116,7 +116,7 @@ namespace TroubleTool
                     entry.SetAttribute("csize", entry.GetAttribute("size"));
                 }
             }
-            if (radioButtonModsYes.Enabled)
+            if (radioButtonModsYes.Checked)
             {
                 AddToLog($"Mods Path: {am.mods}", Color.White);
                 AddToLog("Adding Mods", Color.White);
