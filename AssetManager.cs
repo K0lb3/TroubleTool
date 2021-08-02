@@ -120,7 +120,7 @@ namespace TroubleTool
                 case "zip":
                     using (ZipArchive z = ZipFile.OpenRead(src))
                     {
-                        z.GetEntry((String)entry.GetAttribute("virtual")).ExtractToFile(dst);
+                        z.GetEntry((String)entry.GetAttribute("virtual")).ExtractToFile(dst, true);
                     }
                     break;
 
@@ -131,7 +131,7 @@ namespace TroubleTool
                     {
                         using (ZipArchive z = new ZipArchive(stream))
                         {
-                            z.GetEntry((String)entry.GetAttribute("virtual")).ExtractToFile(dst);
+                            z.GetEntry((String)entry.GetAttribute("virtual")).ExtractToFile(dst, true);
                         }
                     }
                     break;
