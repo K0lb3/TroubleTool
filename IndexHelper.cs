@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.IO.Compression;
 using System.Text;
 using System.Xml;
 
@@ -11,6 +12,25 @@ namespace TroubleTool
         {
             byte[] data = File.ReadAllBytes(path);
             Crypt.decrypt(data, data.Length);
+            // check if the file is a zip file
+            if ((data[0] == 0x50) && (data[1] == 0x4b))
+            {
+                byte[] tempData;
+                using (var stream = new MemoryStream(data))
+                {
+                    using (ZipArchive z = new ZipArchive(stream))
+                    {
+                        ZipArchiveEntry entry = z.GetEntry("index");
+                        tempData = new byte[entry.Length];
+                        using (var entryStream = entry.Open())
+                        {
+                            entryStream.Read(tempData, 0, (int)entry.Length);
+                        }
+                    }
+                }
+                data = tempData;
+            }
+
             int i = data.Length - 1;
             while (data[i] == 0)
             {
