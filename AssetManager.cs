@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Xml;
+using System.Linq;
 
 namespace TroubleTool
 {
@@ -37,7 +38,8 @@ namespace TroubleTool
             if (indexXml.DocumentElement.HasAttribute("mod"))
             {
                 indexXml = IndexHelper.LoadIndex(indexBackUpPath);
-            } else
+            }
+            else
             {
                 if ((!File.Exists(indexBackUpPath)) || (new FileInfo(indexPath).Length != new FileInfo(indexBackUpPath).Length))
                     File.Copy(indexPath, indexBackUpPath, true);
@@ -73,19 +75,12 @@ namespace TroubleTool
 
         internal List<XmlElement> BackUpPackageFiles(List<String> files)
         {
-            List<XmlElement> toBackUp = new List<XmlElement>();
-            foreach (String file in files)
-            {
-                XmlElement entry = indexXml.DocumentElement;
-                String src = Path.Combine(package, entry.GetAttribute("pack"));
-                String dst = Path.Combine(data, entry.GetAttribute("original"));
-
-                if (((!File.Exists(dst)) || (Int32.Parse(entry.GetAttribute("size")) != new FileInfo(dst).Length)) && (Int32.Parse(entry.GetAttribute("csize")) == new FileInfo(src).Length))
-                {
-                    toBackUp.Add(entry);
-                }
-            }
-            return toBackUp;
+            return (from String file in files
+                    let entry = indexXml.DocumentElement
+                    let src = Path.Combine(package, entry.GetAttribute("pack"))
+                    let dst = Path.Combine(data, entry.GetAttribute("original"))
+                    where ((!File.Exists(dst)) || (Int32.Parse(entry.GetAttribute("size")) != new FileInfo(dst).Length)) && (Int32.Parse(entry.GetAttribute("csize")) == new FileInfo(src).Length)
+                    select entry).ToList();
         }
 
         internal void ExtractAllEntries()
@@ -126,7 +121,7 @@ namespace TroubleTool
 
                 case "encrypted_zip":
                     byte[] data = File.ReadAllBytes(src);
-                    Crypt.decrypt(data, data.Length);
+                    data = Crypt.Decrypt(data);
                     using (var stream = new MemoryStream(data))
                     {
                         using (ZipArchive z = new ZipArchive(stream))
@@ -173,7 +168,7 @@ namespace TroubleTool
                         }
                         data = stream.ToArray();
                     }
-                    Crypt.encrypt(data, data.Length);
+                    data = Crypt.Encrypt(data);
                     File.WriteAllBytes(dst, data);
                     break;
 

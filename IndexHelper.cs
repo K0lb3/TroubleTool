@@ -8,10 +8,10 @@ namespace TroubleTool
 {
     static class IndexHelper
     {
-        public static XmlDocument LoadIndex (String path)
+        public static XmlDocument LoadIndex(String path)
         {
             byte[] data = File.ReadAllBytes(path);
-            Crypt.decrypt(data, data.Length);
+            data = Crypt.Decrypt(data);
             // check if the file is a zip file
             if ((data[0] == 0x50) && (data[1] == 0x4b))
             {
@@ -59,7 +59,7 @@ namespace TroubleTool
                 }
                 data_enc = stream.ToArray();
             }
-            Crypt.encrypt(data_enc, data_enc.Length);
+            data_enc = Crypt.Encrypt(data_enc);
             File.WriteAllBytes(path, data_enc);
         }
     }

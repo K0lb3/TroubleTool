@@ -68,7 +68,7 @@ namespace TroubleTool
             this.textBoxTroubleshooterPath.Name = "textBoxTroubleshooterPath";
             this.textBoxTroubleshooterPath.Size = new System.Drawing.Size(264, 43);
             this.textBoxTroubleshooterPath.TabIndex = 0;
-            this.textBoxTroubleshooterPath.TextChanged += new System.EventHandler(this.textBoxTroubleshooterPath_TextChanged);
+            this.textBoxTroubleshooterPath.TextChanged += new System.EventHandler(this.TextBoxTroubleshooterPath_TextChanged);
             // 
             // labelTroubleshooterPath
             // 
@@ -88,7 +88,7 @@ namespace TroubleTool
             this.buttonExtract.TabIndex = 2;
             this.buttonExtract.Text = "Extract Pack To Data";
             this.buttonExtract.UseVisualStyleBackColor = true;
-            this.buttonExtract.Click += new System.EventHandler(this.buttonExtract_Click);
+            this.buttonExtract.Click += new System.EventHandler(this.ButtonExtract_Click);
             // 
             // groupBoxLog
             // 
@@ -118,7 +118,7 @@ namespace TroubleTool
             this.buttonApply.TabIndex = 4;
             this.buttonApply.Text = "Apply Settings";
             this.buttonApply.UseVisualStyleBackColor = true;
-            this.buttonApply.Click += new System.EventHandler(this.buttonApply_Click);
+            this.buttonApply.Click += new System.EventHandler(this.ButtonApply_Click);
             // 
             // buttonUninstall
             // 
@@ -129,7 +129,7 @@ namespace TroubleTool
             this.buttonUninstall.TabIndex = 5;
             this.buttonUninstall.Text = "Uninstall Mod";
             this.buttonUninstall.UseVisualStyleBackColor = true;
-            this.buttonUninstall.Click += new System.EventHandler(this.buttonUninstall_Click);
+            this.buttonUninstall.Click += new System.EventHandler(this.ButtonUninstall_Click);
             // 
             // buttonLaunch
             // 
@@ -140,7 +140,7 @@ namespace TroubleTool
             this.buttonLaunch.TabIndex = 6;
             this.buttonLaunch.Text = "Launch Game";
             this.buttonLaunch.UseVisualStyleBackColor = true;
-            this.buttonLaunch.Click += new System.EventHandler(this.buttonLaunch_Click);
+            this.buttonLaunch.Click += new System.EventHandler(this.ButtonLaunch_Click);
             // 
             // groupBoxSettings
             // 
@@ -272,7 +272,7 @@ namespace TroubleTool
             this.buttonImagesets.TabIndex = 9;
             this.buttonImagesets.Text = "Extract Imagesets";
             this.buttonImagesets.UseVisualStyleBackColor = true;
-            this.buttonImagesets.Click += new System.EventHandler(this.buttonImageSets_Click);
+            this.buttonImagesets.Click += new System.EventHandler(this.ButtonImageSets_Click);
             // 
             // tableLayoutPanel4
             // 
@@ -330,7 +330,7 @@ namespace TroubleTool
             this.buttonOpenGameFolder.TabIndex = 10;
             this.buttonOpenGameFolder.Text = "Open Game Folder";
             this.buttonOpenGameFolder.UseVisualStyleBackColor = true;
-            this.buttonOpenGameFolder.Click += new System.EventHandler(this.buttonOpenGameFolder_Click);
+            this.buttonOpenGameFolder.Click += new System.EventHandler(this.ButtonOpenGameFolder_Click);
             // 
             // Form1
             // 

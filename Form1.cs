@@ -5,8 +5,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.IO.Compression;
-using System.Security.Cryptography;
-using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 
@@ -14,7 +12,7 @@ namespace TroubleTool
 {
     public partial class Form1 : Form
     {
-        private Logger.Logger _log = new Logger.Logger(100u);
+        private readonly Logger.Logger _log = new Logger.Logger(100u);
         private AssetManager am = null;
 
         public Form1()
@@ -33,7 +31,6 @@ namespace TroubleTool
 
         private void FindTroubleshooter()
         {
-            String steamPath = "";
             List<String> libPaths = new List<string>();
 
             // 1. try to find Steam via regex
@@ -42,6 +39,7 @@ namespace TroubleTool
             RegistryKey key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\WOW6432Node\Valve\Steam");
             if (key == null)
                 key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Valve\Steam");
+            string steamPath;
             //if it does exist, retrieve the stored values  
             if (key != null)
             {
@@ -75,7 +73,7 @@ namespace TroubleTool
             AddToLog($"Troubleshooter not found", Color.Red);
         }
 
-        private void buttonExtract_Click(object sender, EventArgs e)
+        private void ButtonExtract_Click(object sender, EventArgs e)
         {
             am.LoadIndex();
             AddToLog("Preparing Extraction", Color.White);
@@ -97,7 +95,7 @@ namespace TroubleTool
             radioButtonData.Enabled = true;
         }
 
-        private void buttonApply_Click(object sender, EventArgs e)
+        private void ButtonApply_Click(object sender, EventArgs e)
         {
             am.LoadIndex();
             AddToLog("Preparing Setup", Color.White);
@@ -124,7 +122,7 @@ namespace TroubleTool
                 Dictionary<String, XmlElement> indexDict = new Dictionary<String, XmlElement>();
                 foreach (XmlElement entry in am.GetEntries())
                 {
-                    indexDict.Add(entry.GetAttribute("original").ToLower().Replace("\\","/"), entry);
+                    indexDict.Add(entry.GetAttribute("original").ToLower().Replace("\\", "/"), entry);
                 }
 
                 foreach (FileInfo file in new DirectoryInfo(am.mods).GetFiles())
@@ -138,8 +136,7 @@ namespace TroubleTool
                             if (zentry.Length == 0)
                                 continue;
                             String key = zentry.FullName.ToLower();
-                            XmlElement entry = null;
-                            if (indexDict.TryGetValue(key, out entry))
+                            if (indexDict.TryGetValue(key, out XmlElement entry))
                             {
                                 entry.SetAttribute("virtual", zentry.FullName);
                                 entry.SetAttribute("pack", pack);
@@ -154,14 +151,14 @@ namespace TroubleTool
             AddToLog("Done", Color.White);
         }
 
-        private void buttonUninstall_Click(object sender, EventArgs e)
+        private void ButtonUninstall_Click(object sender, EventArgs e)
         {
             AddToLog("Restoring the data to vanilla state", Color.White);
             File.Copy(am.indexBackUpPath, am.indexPath, true);
             AddToLog("Done", Color.White);
         }
 
-        private void buttonLaunch_Click(object sender, EventArgs e)
+        private void ButtonLaunch_Click(object sender, EventArgs e)
         {
             // 1. patch exe
             String exe_ori = Path.Combine(textBoxTroubleshooterPath.Text, "Release\\bin\\ProtoLion.exe");
@@ -179,11 +176,13 @@ namespace TroubleTool
             */
             // 3. launch exe
             // Prepare the process to run
-            ProcessStartInfo start = new ProcessStartInfo();
-            // Enter in the command line arguments, everything you would enter after the executable name itself
-            start.Arguments = "--pack --usedic" + ((radioButtonConsoleYes.Checked) ? (" --console") : "");
-            // Enter the executable to run, including the complete path
-            start.FileName = exe_ori;
+            ProcessStartInfo start = new ProcessStartInfo
+            {
+                // Enter in the command line arguments, everything you would enter after the executable name itself
+                Arguments = "--pack --usedic" + ((radioButtonConsoleYes.Checked) ? (" --console") : ""),
+                // Enter the executable to run, including the complete path
+                FileName = exe_ori
+            };
             start.Environment.Add("SteamAPPID", "470310");
             start.WorkingDirectory = Path.Combine(textBoxTroubleshooterPath.Text, "Release\\bin");
             start.UseShellExecute = false;
@@ -206,10 +205,10 @@ namespace TroubleTool
             */
 
             // Launch Detached
-            Process proc = Process.Start(start);
+            _ = Process.Start(start);
         }
 
-        private void textBoxTroubleshooterPath_TextChanged(object sender, EventArgs e)
+        private void TextBoxTroubleshooterPath_TextChanged(object sender, EventArgs e)
         {
             if (Directory.Exists(textBoxTroubleshooterPath.Text))
             {
@@ -253,12 +252,12 @@ namespace TroubleTool
             }
         }
 
-        private void buttonImageSets_Click(object sender, EventArgs e)
+        private void ButtonImageSets_Click(object sender, EventArgs e)
         {
             String path = Path.Combine(am.data, "CEGUI", "datafiles", "imagesets");
             if (!Directory.Exists(path))
                 return;
-            foreach(FileInfo file in new DirectoryInfo(path).GetFiles())
+            foreach (FileInfo file in new DirectoryInfo(path).GetFiles())
             {
                 if (!file.Name.EndsWith(".imageset"))
                     continue;
@@ -283,12 +282,12 @@ namespace TroubleTool
                 {
                     AddToLog(entry.GetAttribute("name"), Color.White);
                     Rectangle cropRect = new Rectangle(
-                        int.Parse(entry.GetAttribute("xPos")), 
+                        int.Parse(entry.GetAttribute("xPos")),
                         int.Parse(entry.GetAttribute("yPos")),
                         int.Parse(entry.GetAttribute("width")),
                         int.Parse(entry.GetAttribute("height"))
                     );
-                    
+
                     Bitmap target = new Bitmap(cropRect.Width, cropRect.Height);
 
                     using (Graphics g = Graphics.FromImage(target))
@@ -297,13 +296,13 @@ namespace TroubleTool
                                          cropRect,
                                          GraphicsUnit.Pixel);
                     }
-                    target.Save(Path.Combine(outPath, entry.GetAttribute("name")+".png"));
+                    target.Save(Path.Combine(outPath, entry.GetAttribute("name") + ".png"));
                 }
             }
             AddToLog("Done", Color.White);
         }
 
-        private void buttonOpenGameFolder_Click(object sender, EventArgs e)
+        private void ButtonOpenGameFolder_Click(object sender, EventArgs e)
         {
             Process.Start(new ProcessStartInfo()
             {
