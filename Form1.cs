@@ -127,6 +127,11 @@ namespace TroubleTool
 
                 foreach (FileInfo file in new DirectoryInfo(am.mods).GetFiles())
                 {
+                    if (file.Extension.ToLower() != "zip")
+                    {
+                        AddToLog($"Ignoring {file.Name} as it's not a zip!", Color.Yellow);
+                        continue;
+                    }
                     AddToLog(file.Name, Color.White);
                     using (ZipArchive z = ZipFile.OpenRead(file.FullName))
                     {
@@ -146,8 +151,26 @@ namespace TroubleTool
                         }
                     }
                 }
+                XmlDocument doc = new XmlDocument();
+                XmlElement root = doc.CreateElement("index");
+                root.SetAttribute("mod", "true");
+                doc.AppendChild(root);
+                foreach (var entry in indexDict)
+                {
+                    XmlElement child = doc.CreateElement("entry");
+                    foreach (XmlAttribute attr in entry.Value.Attributes)
+                    {
+                        child.SetAttribute(attr.Name, attr.Value);
+                    }
+
+                    root.AppendChild(child);
+                }
+                am.SaveIndex(doc);
             }
-            am.SaveIndex();
+            else
+            {
+                am.SaveIndex();
+            }
             AddToLog("Done", Color.White);
         }
 
@@ -261,7 +284,7 @@ namespace TroubleTool
             {
                 if (!file.Name.EndsWith(".imageset"))
                     continue;
-                XmlDataDocument imageset = new XmlDataDocument();
+                XmlDocument imageset = new XmlDocument();
                 imageset.Load(file.FullName);
 
                 XmlElement root = imageset.DocumentElement;
@@ -296,7 +319,7 @@ namespace TroubleTool
                                          cropRect,
                                          GraphicsUnit.Pixel);
                     }
-                    target.Save(Path.Combine(outPath, entry.GetAttribute("name") + ".png"));
+                    target.Save(Path.Combine(outPath, entry.GetAttribute("name").Trim('\n') + ".png"));
                 }
             }
             AddToLog("Done", Color.White);

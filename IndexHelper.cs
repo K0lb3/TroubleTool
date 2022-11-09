@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.IO.Compression;
+using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Xml;
 
@@ -8,6 +10,8 @@ namespace TroubleTool
 {
     static class IndexHelper
     {
+        static bool zipped;
+
         public static XmlDocument LoadIndex(String path)
         {
             byte[] data = File.ReadAllBytes(path);
@@ -15,6 +19,7 @@ namespace TroubleTool
             // check if the file is a zip file
             if ((data[0] == 0x50) && (data[1] == 0x4b))
             {
+                zipped = true;
                 byte[] tempData;
                 using (var stream = new MemoryStream(data))
                 {
@@ -29,6 +34,10 @@ namespace TroubleTool
                     }
                 }
                 data = tempData;
+            }
+            else
+            {
+                zipped = false;
             }
 
             int i = data.Length - 1;
@@ -45,9 +54,6 @@ namespace TroubleTool
 
         public static void SaveIndex(XmlDocument doc, String path)
         {
-            // make sure that that index file is flagged as modded
-            doc.DocumentElement.SetAttribute("mod", "true");
-
             byte[] data_enc = null;
             using (var stream = new MemoryStream())
             {
@@ -59,7 +65,24 @@ namespace TroubleTool
                 }
                 data_enc = stream.ToArray();
             }
+            if (zipped)
+            {
+                using (var stream = new MemoryStream())
+                {
+                    using (ZipArchive z = new ZipArchive(stream, ZipArchiveMode.Create, true))
+                    {
+                        ZipArchiveEntry entry = z.CreateEntry("index");
+                        using (var entryStream = entry.Open())
+                        {
+                            entryStream.Write(data_enc, 0, data_enc.Length);
+                        }
+                    }
+                    data_enc = stream.ToArray();
+                }
+            }
             data_enc = Crypt.Encrypt(data_enc);
+
+
             File.WriteAllBytes(path, data_enc);
         }
     }

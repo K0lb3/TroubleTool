@@ -4,6 +4,8 @@ using System.IO;
 using System.IO.Compression;
 using System.Xml;
 using System.Linq;
+using System.Xml.Linq;
+using System.Drawing;
 
 namespace TroubleTool
 {
@@ -51,6 +53,11 @@ namespace TroubleTool
             IndexHelper.SaveIndex(indexXml, indexPath);
         }
 
+        internal void SaveIndex(XmlDocument modIndexXml)
+        {
+            IndexHelper.SaveIndex(modIndexXml, indexPath);
+        }
+
         internal XmlNodeList GetEntries()
         {
             XmlElement root = indexXml.DocumentElement;
@@ -87,18 +94,14 @@ namespace TroubleTool
         {
             foreach (XmlElement entry in GetEntries())
             {
-                String src = Path.Combine(package, entry.GetAttribute("pack"));
-                String dst = Path.Combine(data, entry.GetAttribute("original"));
-                // TODO - check if it really has to be extracted
-                Console.WriteLine($"Extracting {src} to {dst}!");
-                Extract(src, dst, entry);
+                ExtractEntry(entry);
             }
         }
 
         internal void ExtractEntry(XmlElement entry)
         {
             String src = Path.Combine(package, entry.GetAttribute("pack"));
-            String dst = Path.Combine(data, entry.GetAttribute("original"));
+            String dst = Path.Combine(data, entry.GetAttribute("original").Trim('\n'));
             Extract(src, dst, entry);
         }
 
