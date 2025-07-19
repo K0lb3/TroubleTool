@@ -127,7 +127,7 @@ namespace TroubleTool
 
                 foreach (FileInfo file in new DirectoryInfo(am.mods).GetFiles())
                 {
-                    if (file.Extension.ToLower() != "zip")
+                    if (file.Extension.ToLower() != ".zip")
                     {
                         AddToLog($"Ignoring {file.Name} as it's not a zip!", Color.Yellow);
                         continue;
